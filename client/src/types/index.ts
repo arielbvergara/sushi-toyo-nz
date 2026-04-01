@@ -14,6 +14,7 @@ export interface MenuItem {
   price2?: string;
   imageUrl: string;
   ingredients?: string;
+  type?: string;
 }
 
 export interface MenuSection {
@@ -64,4 +65,14 @@ export interface NearbyRestaurant {
   name: string;
   description: string;
   mapsUrl: string;
+}
+
+export interface CloudinaryImage {
+  publicId: string;
+  url: string;
+  secureUrl: string;
+  format: string;
+  width: number;
+  height: number;
+  createdAt: string;
 }
