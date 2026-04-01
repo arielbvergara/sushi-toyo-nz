@@ -67,6 +67,21 @@ export interface NearbyRestaurant {
   mapsUrl: string;
 }
 
+// ── Menu display types ────────────────────────────────────────────────────────
+
+export interface MenuDrinkSubGroup {
+  label: string;
+  items: { name: string; price: string }[];
+}
+
+export interface ExtendedMenuSection extends MenuSection {
+  categoryLabel?: string;
+  description?: string;
+  drinkSubGroups?: MenuDrinkSubGroup[];
+}
+
+// ── Cloudinary ────────────────────────────────────────────────────────────────
+
 export interface CloudinaryImage {
   publicId: string;
   url: string;
