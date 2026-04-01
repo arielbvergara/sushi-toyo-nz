@@ -13,6 +13,7 @@ const COL_PRICE2_DESC = 4;
 const COL_PRICE2 = 5;
 const COL_IMAGE_URL = 6;
 const COL_INGREDIENTS = 7;
+const COL_TYPE = 8;
 const MIN_DATA_ROW_COLUMNS = 2;
 
 export class MenuService {
@@ -126,6 +127,7 @@ export class MenuService {
       price2: row[COL_PRICE2]?.trim() || undefined,
       imageUrl: row[COL_IMAGE_URL]?.trim() ?? "",
       ingredients: row[COL_INGREDIENTS]?.trim() || undefined,
+      type: row[COL_TYPE]?.trim() || undefined,
     };
   }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/ui/Navbar";
 
@@ -9,15 +9,16 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const poppins = Poppins({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
 });
 
 export const metadata: Metadata = {
-  title: "GS Starter — Next.js + Google Services",
-  description: "Next.js + Express with Google Calendar, Sheets, Drive & Gmail pre-configured.",
+  title: "Sushi Toyo — Authentic Japanese Cuisine, Takapuna Auckland",
+  description: "Handcrafted sushi & donburi on Auckland's North Shore. Fresh flavours, tradition in every bite.",
 };
 
 export default function RootLayout({
@@ -26,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
       <body className="min-h-screen antialiased pt-16" suppressHydrationWarning>
         <Navbar />
         {children}

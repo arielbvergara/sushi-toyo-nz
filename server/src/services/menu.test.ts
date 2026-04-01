@@ -6,7 +6,7 @@ import { GoogleAuth } from "google-auth-library";
 // no Google API calls are made in these tests.
 const service = new MenuService({} as GoogleAuth);
 
-const HEADER_ROW = ["Title", "description", "Price_1_description", "Price_1", "Price_2_description", "Price_2", "ImageUrl", "Ingredients"];
+const HEADER_ROW = ["Title", "description", "Price_1_description", "Price_1", "Price_2_description", "Price_2", "ImageUrl", "Ingredients", "Type"];
 
 describe("MenuService.parseMenuItems (legacy flat format)", () => {
   it("parseMenuItems_ShouldReturnEmptyArray_WhenOnlyHeaderRowProvided", () => {
@@ -273,6 +273,58 @@ describe("MenuService.parseMenuSections", () => {
     expect(result).toHaveLength(1);
     expect(result[0].items).toHaveLength(1);
     expect(result[0].items[0].title).toBe("Water");
+  });
+});
+
+describe("MenuService — Type column (col 8)", () => {
+  it("parseMenuItems_ShouldMapTypeField_WhenColumn8HasValue", () => {
+    const rows = [
+      HEADER_ROW,
+      ["Salmon Nigiri", "Delicate nigiri", "Each", "6.90", "", "", "", "", "SIGNATURE"],
+    ];
+    const result = service.parseMenuItems(rows);
+    expect(result[0].type).toBe("SIGNATURE");
+  });
+
+  it("parseMenuItems_ShouldTrimTypeField_WhenColumn8HasWhitespace", () => {
+    const rows = [
+      HEADER_ROW,
+      ["Beef Donburi", "Rice bowl", "Regular", "23.97", "", "", "", "", "  HOME  "],
+    ];
+    const result = service.parseMenuItems(rows);
+    expect(result[0].type).toBe("HOME");
+  });
+
+  it("parseMenuItems_ShouldSetTypeToUndefined_WhenColumn8IsEmpty", () => {
+    const rows = [
+      HEADER_ROW,
+      ["Miso Soup", "Traditional soup", "Bowl", "5.00", "", "", "", "", ""],
+    ];
+    const result = service.parseMenuItems(rows);
+    expect(result[0].type).toBeUndefined();
+  });
+
+  it("parseMenuItems_ShouldSetTypeToUndefined_WhenRowHasFewerThan9Cells", () => {
+    const rows = [
+      HEADER_ROW,
+      ["Green Tea", "Hot green tea", "Cup", "4.50", "", "", "", ""],
+    ];
+    const result = service.parseMenuItems(rows);
+    expect(result[0].type).toBeUndefined();
+  });
+
+  it("parseMenuSections_ShouldPreserveTypeOnSectionItems_WhenTypeColumnIsPresent", () => {
+    const rows = [
+      ["Sushi"],
+      HEADER_ROW,
+      ["Salmon Nigiri", "Nigiri", "Each", "6.90", "", "", "", "", "SIGNATURE"],
+      ["Tuna Nigiri", "Nigiri", "Each", "7.90", "", "", "", "", "HOME"],
+      ["Prawn Nigiri", "Nigiri", "Each", "6.90", "", "", "", "", ""],
+    ];
+    const result = service.parseMenuSections(rows);
+    expect(result[0].items[0].type).toBe("SIGNATURE");
+    expect(result[0].items[1].type).toBe("HOME");
+    expect(result[0].items[2].type).toBeUndefined();
   });
 });
 
