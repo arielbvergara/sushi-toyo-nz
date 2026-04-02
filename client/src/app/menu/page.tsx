@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { api } from "@/lib/api";
 import type { ExtendedMenuSection, MenuSection } from "@/types";
 import { TwoColumnMenuSection } from "@/components/menu/TwoColumnMenuSection";
@@ -8,6 +9,9 @@ import { DrinksSection } from "@/components/menu/DrinksSection";
 import { VisitUsCta } from "@/components/menu/VisitUsCta";
 import { MapSection } from "@/components/menu/MapSection";
 import { SiteFooter, MENU_FOOTER_NAV } from "@/components/layout/SiteFooter";
+
+const HERO_IMAGE_URL =
+  "https://res.cloudinary.com/dhdrv4f0q/image/upload/v1775108680/sushi-toyo-nz/xsgaem4cehjhdbjuvpoi.jpg";
 
 function renderSection(section: ExtendedMenuSection, index: number) {
   if (section.drinkSubGroups && section.drinkSubGroups.length > 0) {
@@ -75,14 +79,19 @@ export default function MenuPage() {
     <main style={{ backgroundColor: "#231F1C" }}>
       {/* Hero */}
       <section
-        className="relative flex items-center justify-center py-24 px-8 text-center"
-        style={{ minHeight: "350px", backgroundColor: "#1C1917" }}
+        className="relative flex items-center justify-center py-24 px-8 text-center overflow-hidden"
+        style={{ minHeight: "350px" }}
       >
+        <Image
+          src={HERO_IMAGE_URL}
+          alt="Sushi Toyo menu — fresh sushi platter"
+          fill
+          className="object-cover"
+          priority
+        />
         <div
           className="absolute inset-0"
-          style={{
-            background: "linear-gradient(135deg, #0D0B08 0%, #2A1F12 50%, #1A1208 100%)",
-          }}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.55)" }}
           aria-hidden="true"
         />
         <div className="relative z-10">

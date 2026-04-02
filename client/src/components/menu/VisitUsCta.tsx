@@ -1,17 +1,24 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PHONE_HREF } from "@/constants/restaurant";
+
+const VISIT_US_CTA_IMAGE_URL =
+  "https://res.cloudinary.com/dhdrv4f0q/image/upload/v1775109116/sushi-toyo-nz/txq9qxc42da3g95tucnn.jpg";
 
 export function VisitUsCta() {
   return (
     <section
       className="relative py-24 px-8 text-center overflow-hidden"
-      style={{ backgroundColor: "#2A1A0A" }}
     >
+      <Image
+        src={VISIT_US_CTA_IMAGE_URL}
+        alt="Sushi Toyo restaurant interior"
+        fill
+        className="object-cover"
+      />
       <div
         className="absolute inset-0"
-        style={{
-          background: "linear-gradient(to bottom, rgba(42,26,10,0.85) 0%, rgba(28,25,23,0.9) 100%)",
-        }}
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
         aria-hidden="true"
       />
 
