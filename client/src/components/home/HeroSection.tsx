@@ -1,4 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
+
+const HERO_IMAGE_URL =
+  "https://res.cloudinary.com/dhdrv4f0q/image/upload/v1775109116/sushi-toyo-nz/txq9qxc42da3g95tucnn.jpg";
 
 export function HeroSection() {
   return (
@@ -9,17 +13,17 @@ export function HeroSection() {
     >
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(135deg, #0D0B08 0%, #2A1F12 50%, #1A1208 100%)",
-          }}
+        <Image
+          src={HERO_IMAGE_URL}
+          alt="Sushi Toyo — handcrafted sushi platter"
+          fill
+          className="object-cover"
+          priority
         />
         <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: "radial-gradient(ellipse at 70% 40%, #4A3520 0%, transparent 60%)",
-          }}
+          className="absolute inset-0"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          aria-hidden="true"
         />
       </div>
 

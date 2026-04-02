@@ -1,4 +1,8 @@
+import Image from "next/image";
 import { QUOTE } from "@/constants/restaurant";
+
+const QUOTE_BG_IMAGE_URL =
+  "https://res.cloudinary.com/dhdrv4f0q/image/upload/v1775110451/sushi-toyo-nz/tfxbzuckud2rkojqweuj.jpg";
 
 export function QuoteDividerSection() {
   return (
@@ -7,12 +11,16 @@ export function QuoteDividerSection() {
       style={{ minHeight: "400px" }}
     >
       {/* Background */}
-      <div className="absolute inset-0" style={{ backgroundColor: "#3D1A0A" }} aria-hidden="true">
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <Image
+          src={QUOTE_BG_IMAGE_URL}
+          alt=""
+          fill
+          className="object-cover"
+        />
         <div
-          className="absolute inset-0 opacity-60"
-          style={{
-            background: "linear-gradient(to right, #8B2500 0%, #3D1A0A 40%, #3D1A0A 60%, #8B2500 100%)",
-          }}
+          className="absolute inset-0"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
         />
       </div>
 

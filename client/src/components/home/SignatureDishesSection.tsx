@@ -54,29 +54,10 @@ interface SignatureDishesProps {
   homeGroups: HomeMenuGroup[];
 }
 
-const MENU_SECTION_BG_URL =
-  "https://lh3.googleusercontent.com/geougc-cs/ABOP9pvJj9PSW_8oNTfdDOXB-TuZ6RnORsiIDEkKZ7UqInmC8INqVR7NuaVqA0K4M8ycSHU2HceHiJK2YRiWJj6_Px-Fvd03pKi-l79Wb76FMXnSDMLa5yW5p4P574OVE7n28zBRbDKnC-dmtI8=w600-h450-p";
-
 export function SignatureDishesSection({ signatureDishes, homeGroups }: SignatureDishesProps) {
   return (
-    <section className="py-20 px-8 relative" style={{ backgroundColor: "#231F1C" }}>
-      {/* Background image with dark overlay */}
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url(${MENU_SECTION_BG_URL})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-0"
-        style={{ backgroundColor: "rgba(28, 25, 23, 0.65)" }}
-        aria-hidden="true"
-      />
-      <div className="relative z-10 max-w-screen-xl mx-auto">
+    <section className="py-20 px-8" style={{ backgroundColor: "#231F1C" }}>
+      <div className="max-w-screen-xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <p

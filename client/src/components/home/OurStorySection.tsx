@@ -1,18 +1,21 @@
+import Image from "next/image";
+
 export function OurStorySection() {
   return (
     <section id="about" className="w-full" style={{ backgroundColor: "#1C1917" }}>
       <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row">
-        {/* Left: image placeholder */}
+        {/* Left: story image */}
         <div
-          className="lg:w-1/2 shrink-0"
-          style={{ minHeight: "480px", backgroundColor: "#2A1F12" }}
-          aria-hidden="true"
+          className="relative lg:w-1/2 shrink-0"
+          style={{ minHeight: "480px" }}
         >
-          <div className="w-full h-full flex items-center justify-center" style={{ minHeight: "480px" }}>
-            <span className="text-xs tracking-widest uppercase" style={{ color: "#4A3520" }}>
-              Our Story Image
-            </span>
-          </div>
+          <Image
+            src="https://res.cloudinary.com/dhdrv4f0q/image/upload/v1775108680/sushi-toyo-nz/xsgaem4cehjhdbjuvpoi.jpg"
+            alt="Our story — Sushi Toyo kitchen"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+          />
         </div>
 
         {/* Right: text */}
