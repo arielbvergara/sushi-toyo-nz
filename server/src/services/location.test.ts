@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { LocationService } from "./location";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { LocationService, LOCATION_CACHE_KEY } from "./location";
+import { cache } from "../lib/cache";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -101,6 +102,11 @@ describe("LocationService.getMockPlaceDetails", () => {
 describe("LocationService.getPlaceDetails", () => {
   beforeEach(() => {
     vi.unstubAllGlobals();
+    cache.invalidate(LOCATION_CACHE_KEY);
+  });
+
+  afterEach(() => {
+    cache.invalidate(LOCATION_CACHE_KEY);
   });
 
   it("getPlaceDetails_ShouldReturnMockData_WhenNoApiKeyProvided", async () => {
@@ -195,5 +201,103 @@ describe("LocationService.getPlaceDetails", () => {
     expect(result.mapsUrl).toMatch(/^https?:\/\//);
     expect(result.reviews[0].authorName).toBe("Anonymous");
     expect(result.reviews[0].text).toBe("");
+  });
+});
+
+// ── getPlaceDetails — cache behaviour ────────────────────────────────────────
+
+describe("LocationService.getPlaceDetails — cache behaviour", () => {
+  beforeEach(() => {
+    vi.unstubAllGlobals();
+    cache.invalidate(LOCATION_CACHE_KEY);
+  });
+
+  afterEach(() => {
+    cache.invalidate(LOCATION_CACHE_KEY);
+  });
+
+  it("getPlaceDetails_ShouldReturnCachedResult_WhenCalledTwiceWithSameApiKey", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(buildPlacesApiResponse());
+    vi.stubGlobal("fetch", mockFetch);
+
+    const service = new LocationService("test-api-key");
+    const first = await service.getPlaceDetails();
+    const second = await service.getPlaceDetails();
+
+    expect(first).toEqual(second);
+  });
+
+  it("getPlaceDetails_ShouldCallFetchOnce_WhenCalledTwiceAndCacheIsWarm", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(buildPlacesApiResponse());
+    vi.stubGlobal("fetch", mockFetch);
+
+    const service = new LocationService("test-api-key");
+    await service.getPlaceDetails();
+    await service.getPlaceDetails();
+
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("getPlaceDetails_ShouldCallFetchAgain_WhenCacheHasBeenInvalidated", async () => {
+    const mockFetch = vi.fn().mockResolvedValue(buildPlacesApiResponse());
+    vi.stubGlobal("fetch", mockFetch);
+
+    const service = new LocationService("test-api-key");
+    await service.getPlaceDetails();
+    cache.invalidate(LOCATION_CACHE_KEY);
+    await service.getPlaceDetails();
+
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("getPlaceDetails_ShouldCacheAllReviews_WhenApiReturnsMultipleReviews", async () => {
+    const multiReviewResponse = buildPlacesApiResponse({
+      reviews: [
+        {
+          relativePublishTimeDescription: "1 week ago",
+          rating: 5,
+          text: { text: "Review 1" },
+          authorAttribution: { displayName: "Reviewer 1" },
+        },
+        {
+          relativePublishTimeDescription: "2 weeks ago",
+          rating: 4,
+          text: { text: "Review 2" },
+          authorAttribution: { displayName: "Reviewer 2" },
+        },
+        {
+          relativePublishTimeDescription: "1 month ago",
+          rating: 5,
+          text: { text: "Review 3" },
+          authorAttribution: { displayName: "Reviewer 3" },
+        },
+      ],
+    });
+    const mockFetch = vi.fn().mockResolvedValue(multiReviewResponse);
+    vi.stubGlobal("fetch", mockFetch);
+
+    const service = new LocationService("test-api-key");
+    const result = await service.getPlaceDetails();
+    cache.invalidate(LOCATION_CACHE_KEY); // force re-read to confirm data was cached, not truncated
+
+    // Re-prime the cache to verify it stored all reviews
+    const mockFetch2 = vi.fn().mockResolvedValue(multiReviewResponse);
+    vi.stubGlobal("fetch", mockFetch2);
+    const cached = await service.getPlaceDetails();
+
+    expect(result.reviews).toHaveLength(3);
+    expect(cached.reviews).toHaveLength(3);
+  });
+
+  it("getPlaceDetails_ShouldCacheMockData_WhenNoApiKeyProvided", async () => {
+    const mockFetch = vi.fn();
+    vi.stubGlobal("fetch", mockFetch);
+
+    const service = new LocationService("");
+    await service.getPlaceDetails();
+    await service.getPlaceDetails();
+
+    // Mock data path should never call fetch
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

@@ -1,74 +1,40 @@
-"use client";
+import { RestaurantJsonLd } from "@/components/seo/RestaurantJsonLd";
+import { HomePageClient } from "@/components/home/HomePageClient";
+import type { PlaceDetails } from "@/types";
 
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import { HeroSection } from "@/components/home/HeroSection";
-import { OurStorySection } from "@/components/home/OurStorySection";
-import { SignatureDishesSection, type DishFromApi, type HomeMenuGroup } from "@/components/home/SignatureDishesSection";
-import { QuoteDividerSection } from "@/components/home/QuoteDividerSection";
-import { VisitUsSection } from "@/components/home/VisitUsSection";
-import { ReviewsSection } from "@/components/home/ReviewsSection";
-import { CtaSection } from "@/components/home/CtaSection";
-import { SiteFooter, HOME_FOOTER_NAV } from "@/components/layout/SiteFooter";
+// No "use client" directive — this is a Server Component so that
+// RestaurantJsonLd (JSON-LD schema) is rendered in the initial HTML response.
+// All client-side behaviour lives in HomePageClient below.
 
-interface MenuSectionData {
-  signatureDishes: DishFromApi[];
-  homeGroups: HomeMenuGroup[];
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://sushitoyo.co.nz";
+
+const SCHEMA_REVALIDATE_SECONDS = 604_800; // 7 days — matches server-side cache TTL
+
+async function fetchLocationForSchema(): Promise<PlaceDetails | null> {
+  const apiBase =
+    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
+  try {
+    const res = await fetch(`${apiBase}/location`, {
+      next: { revalidate: SCHEMA_REVALIDATE_SECONDS },
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as { success: boolean; data?: PlaceDetails };
+    return json.success && json.data ? json.data : null;
+  } catch {
+    return null;
+  }
 }
 
-export default function Home() {
-  const [menuSectionData, setMenuSectionData] = useState<MenuSectionData | null>(null);
-
-  useEffect(() => {
-    api.menu.list().then((res) => {
-      if (!res.success || !res.data) return;
-
-      const signatureDishes: DishFromApi[] = [];
-      const homeGroups: HomeMenuGroup[] = [];
-
-      for (const section of res.data) {
-        const homeItems = section.items
-          .filter((item) => item.type?.toUpperCase() === "HOME")
-          .map((item) => ({ name: item.title, price: item.price1 }));
-
-        if (homeItems.length > 0) {
-          homeGroups.push({ label: section.name.toUpperCase(), items: homeItems });
-        }
-
-        for (const item of section.items) {
-          if (item.type?.toUpperCase() === "SIGNATURE") {
-            signatureDishes.push({
-              title: item.title,
-              description: item.description,
-              price: item.price1,
-              imageUrl: item.imageUrl,
-            });
-          }
-        }
-      }
-
-      const hasTypedItems = signatureDishes.length > 0 || homeGroups.length > 0;
-      if (!hasTypedItems) return;
-
-      setMenuSectionData({ signatureDishes, homeGroups });
-    });
-  }, []);
+export default async function Home() {
+  const locationDetails = await fetchLocationForSchema();
 
   return (
     <main>
-      <HeroSection />
-      <OurStorySection />
-      {menuSectionData && (
-        <SignatureDishesSection
-          signatureDishes={menuSectionData.signatureDishes}
-          homeGroups={menuSectionData.homeGroups}
-        />
+      {locationDetails && (
+        <RestaurantJsonLd details={locationDetails} siteUrl={SITE_URL} />
       )}
-      <QuoteDividerSection />
-      <VisitUsSection />
-      <ReviewsSection />
-      <CtaSection />
-      <SiteFooter navLinks={HOME_FOOTER_NAV} />
+      <HomePageClient />
     </main>
   );
 }

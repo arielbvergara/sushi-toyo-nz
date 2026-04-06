@@ -1,4 +1,8 @@
 import { PlaceDetails, PlaceReview } from "../types";
+import { cache } from "../lib/cache";
+
+export const LOCATION_CACHE_KEY = "location:details";
+const LOCATION_CACHE_TTL_MS = 604_800 * 1000; // 7 days
 
 const PLACE_NAME = "Sushi Toyo Takapuna";
 const PLACE_ADDRESS = "55 Hurstmere Road, Takapuna, Auckland 0622, New Zealand";
@@ -104,10 +108,15 @@ export class LocationService {
   }
 
   async getPlaceDetails(): Promise<PlaceDetails> {
-    if (this.mapsApiKey) {
-      return this.fetchFromPlacesApi();
-    }
-    return this.getMockPlaceDetails();
+    const cached = cache.get<PlaceDetails>(LOCATION_CACHE_KEY);
+    if (cached) return cached;
+
+    const result = this.mapsApiKey
+      ? await this.fetchFromPlacesApi()
+      : this.getMockPlaceDetails();
+
+    cache.set(LOCATION_CACHE_KEY, result, LOCATION_CACHE_TTL_MS);
+    return result;
   }
 
   getMockPlaceDetails(): PlaceDetails {

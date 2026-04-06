@@ -21,25 +21,11 @@ interface SiteFooterProps {
 function SushiToyoLogo() {
   return (
     <div className="flex items-center gap-2.5">
-      <div
-        className="w-8 h-8 grid grid-cols-2 gap-0.5 p-0.5 shrink-0"
-        style={{ backgroundColor: "#8B1A1A" }}
-        aria-hidden="true"
-      >
-        <div className="bg-[#F5F0E8] flex items-center justify-center">
-          <span style={{ fontSize: "5px", fontWeight: 700, color: "#1C1917" }}>TO</span>
-        </div>
-        <div className="bg-[#F5F0E8] flex items-center justify-center">
-          <span style={{ fontSize: "5px", fontWeight: 700, color: "#1C1917" }}>YO</span>
-        </div>
-        <div className="bg-[#F5F0E8]" />
-        <div className="bg-[#F5F0E8]" />
-      </div>
       <span
         className="font-semibold tracking-widest text-sm uppercase"
         style={{ color: "#F5F0E8", fontFamily: "var(--font-family-sans)" }}
       >
-        Toyo
+        Sushi Toyo
       </span>
     </div>
   );
