@@ -87,4 +87,17 @@ export class SheetsService {
       },
     });
   }
+
+  async clearRange(spreadsheetId: string, range: string): Promise<void> {
+    await this.sheets.spreadsheets.values.clear({ spreadsheetId, range });
+  }
+
+  async batchWrite(spreadsheetId: string, range: string, values: string[][]): Promise<void> {
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range,
+      valueInputOption: "USER_ENTERED",
+      requestBody: { values },
+    });
+  }
 }
